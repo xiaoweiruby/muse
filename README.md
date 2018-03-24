@@ -1,24 +1,16 @@
-# README
-
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+# 才华横溢 muse 案例教学 12
+```
+cd workspace
+rails new muse
+cd muse
+git init
+git commit -m "initial commit"
+git remote add origin https://github.com/shenzhoudance/muse.git
+git push -u origin master
+```
+```
+atom .
+rails server
+http://localhost:3000/
+```
+![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpnw0fa0rej30uy0rsh3o.jpg)
