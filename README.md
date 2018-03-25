@@ -220,7 +220,14 @@ app/views/posts/show.html.haml
 ![image](https://ws3.sinaimg.cn/large/006tKfTcly1fpp5h3k7kjj30m40emabi.jpg)
 ![image](https://ws1.sinaimg.cn/large/006tKfTcly1fpp5h9eoj9j30mw08oaan.jpg)
 
+# 以上的代码的梳理，完成了基本功能的 CRUD 的构建；
+```
+git status
 git add .
 git commit -m "add post CRUD"
 git push origin add_gem
-# 以上的代码的梳理，完成了基本功能的 CRUD 的构建；
+```
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61v0931j31kw0otdl6.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61wmb2sj317s0q6tcg.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61xzkxmj318a0s20yj.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61zezq0j318k0ligq6.jpg)
