@@ -52,3 +52,13 @@ app/views/posts/index.html.erb
 <h1>欢迎来到才华横溢的世界</h1>
 ```
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpnx26bh58j30r808kdgf.jpg)
+
+```
+git checkout -b add_gem
+https://rubygems.org/
+---
+gem 'haml', '~> 5.0', '>= 5.0.4'
+gem 'simple_form', '~> 3.5', '>= 3.5.1'
+gem 'paperclip', '~> 6.0'
+---
+bundle install
