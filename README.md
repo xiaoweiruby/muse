@@ -757,3 +757,508 @@ git commit -m "add index show & setup voting"
 git push origin acts_as_votable
 ```
 ![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpqe9yxgraj31c20usdni.jpg)
+```
+git checkout -b layouts-scss
+app/views/layouts/application.html.haml
+---
+!!!
+%html
+%head
+	%title Muse
+	= stylesheet_link_tag    'application', media: 'all'
+	= javascript_include_tag 'application'
+	%link{:rel => "stylesheet", :href => "http://cdnjs.cloudflare.com/ajax/libs/normalize/3.0.1/normalize.min.css"}
+	%link{:rel => "stylesheet", :href => "http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css"}
+	= csrf_meta_tags
+%body
+	%header
+		.wrapper.clearfix
+			#logo= link_to "Muse", root_path
+			%nav
+				- if user_signed_in?
+					= link_to "current_user.name", edit_user_registration_path, class: "button"
+					= link_to "Add New Inspiration", new_post_path, class: "button"
+				- else
+					= link_to "Sign in", new_user_session_path
+					= link_to "Sign Up", new_user_registration_path, class: "button"
+	%p.notice= notice
+	%p.alert= alert
+	.wrapper
+		= yield
+---
+app/assets/stylesheets/application.css.scss
+---
+/*
+ *= require_self
+ */
+
+body {
+	font-family: "Proxima Nova";
+	font-weight: 100;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: 100;
+}
+
+.wrapper {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.clearfix:before, .clearfix:after {
+	content: " ";
+	display: table;
+}
+
+.clearfix:after {
+	clear: both;
+}
+
+.button {
+	border: 1px solid #9B9B9B;
+	padding: .7rem 1.25rem;
+	border-radius: .3rem;
+	outline: none;
+	background: white;
+	color: #9B9B9B;
+}
+
+header {
+	width: 100%;
+	padding: 2rem 0;
+	border-bottom: 1px solid #E4E4E4;
+	#logo {
+		float: left;
+		font-size: 1.75rem;
+		a {
+			color: #333233;
+			text-decoration: none;
+			&:hover {
+				color: #50A7C7;
+			}
+		}
+	}
+	nav {
+		float: right;
+		a {
+			margin-left: 1.5rem;
+			line-height: 2;
+			color: #9B9B9B;
+			text-decoration: none;
+			&:hover {
+				color: #50A7C7;
+			}
+		}
+	}
+}
+
+@import 'home.css.scss';
+@import 'post.css.scss';
+app/assets/stylesheets/home.css.scss
+---
+
+#intro {
+	margin: 2.75rem 0 1.75rem 0;
+	text-align: center;
+	font-size: 1.75rem;
+	line-height: 1;
+	span {
+		font-size: 1.25rem;
+		color: #9B9B9B;
+	}
+}
+#posts {
+	.post {
+		background: #F8F9FA;
+		width: 30%;
+		float: left;
+		margin: 1rem 1.5%;
+		border: 1px solid #E4E4E4;
+		border-radius: 0.3rem;
+		.post_image {
+			height: 200px;
+			overflow: hidden;
+			img {
+				width: 100%;
+				border-radius: .3rem .3rem 0 0;
+			}
+		}
+		.post_content {
+			h2 {
+				margin: 0;
+				font-weight: 100;
+				padding: 1rem 5%;
+				border-bottom: 1px solid #E4E4E4;
+				font-size: 1.25rem;
+				a {
+					text-decoration: none;
+					color: #333233;
+					&:hover {
+						color: #50A7C7;
+					}
+				}
+			}
+			.data {
+				padding: .75rem 5%;
+				color: #969696;
+				.username, .buttons {
+					margin: 0;
+					font-size: .8rem;
+				}
+				.username {
+					float: left;
+				}
+				.buttons {
+					float: right;
+					span {
+						margin-left: .5rem;
+					}
+				}
+			}
+		}
+	}
+}
+---
+app/assets/stylesheets/post.css.scss
+---
+#post_show {
+	padding-top: 2rem;
+	.post_image_description {
+		width: 50%;
+		float: left;
+		margin-right: 5%;
+	}
+	.post_data {
+		width: 15%;
+		float: left;
+		.button {
+			width: 100%;
+			display: inline-block;
+			padding: .75rem 0;
+			margin-bottom: 1rem;
+			text-align: center;
+			text-decoration: none;
+			color: #969696;
+			&:hover {
+				color: #50A7C7;
+				border: 1px solid #50A7C7;
+			}
+		}
+		.data {
+			width: 100%;
+			display: block;
+			padding: .75rem 0;
+			border-bottom: 1px solid #E9E9E9;
+			text-decoration: none;
+			color: #969696;
+			margin: 0;
+		}
+	}
+	#random_post {
+		width: 25%;
+		margin-left: 5%;
+		margin-top: -3.2rem;
+		float: left;
+		h3 {
+			font-size: 1rem;
+		}
+		.post {
+			background: #F8F9FA;
+			border: 1px solid #E4E4E4;
+			border-radius: 0.3rem;
+			.post_image {
+				height: 200px;
+				overflow: hidden;
+				img {
+					width: 100%;
+					border-radius: .3rem .3rem 0 0;
+				}
+			}
+			.post_content {
+				h2 {
+					margin: 0;
+					font-weight: 100;
+					padding: 1rem 5%;
+					border-bottom: 1px solid #E4E4E4;
+					font-size: 1.25rem;
+					a {
+						text-decoration: none;
+						color: #333233;
+						&:hover {
+							color: #50A7C7;
+						}
+					}
+				}
+				.data {
+					padding: .75rem 5%;
+					color: #969696;
+					.username, .buttons {
+						margin: 0;
+						font-size: .8rem;
+					}
+					.username {
+						float: left;
+					}
+					.buttons {
+						float: right;
+						span {
+							margin-left: .5rem;
+						}
+					}
+				}
+			}
+		}
+	}
+	h1 {
+		margin: 0;
+		color: #333233;
+	}
+	img {
+		width: 100%;
+		border-radius: .3rem;
+	}
+	.username {
+		color: #969696;
+		margin: 0 0 1.5rem 0;
+	}
+	.description {
+		margin: 2rem 0;
+		font-size: 1.1rem;
+		line-height: 1.5;
+		color: #969696;
+	}
+}
+
+#comments {
+	padding-bottom: 4rem;
+	width: 50%;
+	.comment_count {
+		border-bottom: 1px solid #E9E9E9;
+		padding-bottom: .5rem;
+		margin-bottom: 0;
+	}
+	.comment {
+		padding: 2rem 0;
+		border-bottom: 1px solid #E9E9E9;
+		padding-left: 5%;
+		.username {
+			font-size: 1.3rem;
+			color: #333233;
+			margin: 0 0 .5rem 0;
+		}
+		.content {
+			margin: 0;
+			color: #969696;
+		}
+	}
+	.comment_content {
+		margin-top: 2.5rem;
+		textarea {
+			width: 100%;
+			margin: 1rem 0;
+			min-height: 150px;
+			border: 1px solid #E4E4E4;
+			background: #F8F9FA;
+			border-radius: 0.3rem;
+		}
+	}
+}
+```
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqezmzawjj31k40zqtmm.jpg)
+![image](https://ws1.sinaimg.cn/large/006tKfTcgy1fpqeyu51bjj31kw0xadop.jpg)
+```
+app/views/posts/index.html.haml
+---
+- if user_signed_in?
+	%p#intro
+		Hello
+		= current_user.name
+		%br/
+		%span
+			Share your inspiration and see what's inspiring others.
+- else
+	%p#intro
+		What's your muse?
+		%br/
+		%span
+			Share your inspiration and see what's inspiring others.
+#posts
+	- @posts.each do |post|
+		.post
+			.post_image
+				= link_to (image_tag post.image.url), post
+			.post_content
+				.title
+					%h2= link_to post.title, post
+				.data.clearfix
+					%p.username
+						Shared by
+						= post.user.name
+					%p.buttons
+						%span
+							%i.fa.fa-comments-o
+							= post.comments.count
+						%span
+							%i.fa.fa-thumbs-o-up
+							= post.get_likes.size
+---
+app/views/posts/show.html.haml
+---
+= image_tag @post.image.url(:medium)
+%h1= @post.title
+%p= @post.link
+%p= @post.description
+%p= @post.user.name
+%p= @post.get_upvotes.size
+%p= @post.get_downvotes.size
+= link_to "like", like_post_path(@post), method: :get
+= link_to "dislike", dislike_post_path(@post), method: :get
+
+
+
+#comments
+	%h2.comment_count= pluralize(@post.comments.count, "Comment")
+	- @comments.each do |comment|
+		.comment
+			%p.username= comment.user.name
+			%p.content= comment.content
+
+	= render "comments/form"
+
+= link_to "home", root_path
+= link_to "edit", edit_post_path(@post)
+= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }
+---
+# 改变
+---
+#post_show
+	%h1= @post.title
+	%p.username
+		Shared by
+		= @post.user.name
+		about
+		= time_ago_in_words(@post.created_at)
+	.clearfix
+		.post_image_description
+			= image_tag @post.image.url(:medium)
+			.description= simple_format(@post.description)
+		.post_data
+			= link_to "Visit Link", @post.link, class: "button"
+			= link_to like_post_path(@post), method: :get, class: "data" do
+				%i.fa.fa-thumbs-o-up
+				= pluralize(@post.get_upvotes.size, "Like")
+			= link_to dislike_post_path(@post), method: :get, class: "data" do
+				%i.fa.fa-thumbs-o-down
+				= pluralize(@post.get_downvotes.size, "Dislike")
+			%p.data
+				%i.fa.fa-comments-o
+				= pluralize(@post.comments.count, "Comment")
+			- if @post.user == current_user
+				= link_to "Edit", edit_post_path(@post), class: "data"
+				= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }, class: "data"
+		#random_post
+			%h3 Random Inspiration
+			.post
+				.post_image
+					= link_to (image_tag @random_post.image.url(:medium)), post_path(@random_post)
+				.post_content
+					.title
+						%h2= link_to @random_post.title, post_path(@random_post)
+					.data.clearfix
+						%p.username
+							Shared by
+							= @random_post.user.name
+						%p.buttons
+							%span
+								%i.fa.fa-comments-o
+								= @random_post.comments.count
+							%span
+								%i.fa.fa-thumbs-o-up
+								= @random_post.get_likes.size
+
+#comments
+	%h2.comment_count= pluralize(@post.comments.count, "Comment")
+	- @comments.each do |comment|
+		.comment
+			%p.username= comment.user.name
+			%p.content= comment.content
+
+	= render "comments/form"
+---
+app/controllers/posts_controller.rb
+---
+def show
+  @comments = Comment.where(post_id: @post)
+  @random_post = Post.where.not(id: @post).order("RANDOM()").first
+end
+---
+app/views/posts/show.html.haml
+---
+#post_show
+	%h1= @post.title
+	%p.username
+		Shared by
+		= @post.user.name
+		about
+		= time_ago_in_words(@post.created_at)
+	.clearfix
+		.post_image_description
+			= image_tag @post.image.url(:medium)
+			.description= simple_format(@post.description)
+		.post_data
+			= link_to "Visit Link", @post.link, class: "button"
+			= link_to like_post_path(@post), method: :get, class: "data" do
+				%i.fa.fa-thumbs-o-up
+				= pluralize(@post.get_upvotes.size, "Like")
+			= link_to dislike_post_path(@post), method: :get, class: "data" do
+				%i.fa.fa-thumbs-o-down
+				= pluralize(@post.get_downvotes.size, "Dislike")
+			%p.data
+				%i.fa.fa-comments-o
+				= pluralize(@post.comments.count, "Comment")
+			- if @post.user == current_user
+				= link_to "Edit", edit_post_path(@post), class: "data"
+				= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }, class: "data"
+		#random_post
+			%h3 Random Inspiration
+			.post
+				.post_image
+					= link_to (image_tag @random_post.image.url(:medium)), post_path(@random_post)
+				.post_content
+					.title
+						%h2= link_to @random_post.title, post_path(@random_post)
+					.data.clearfix
+						%p.username
+							Shared by
+							= @random_post.user.name
+						%p.buttons
+							%span
+								%i.fa.fa-comments-o
+								= @random_post.comments.count
+							%span
+								%i.fa.fa-thumbs-o-up
+								= @random_post.get_likes.size
+
+#comments
+	%h2.comment_count= pluralize(@post.comments.count, "Comment")
+	- @comments.each do |comment|
+		.comment
+			%p.username= comment.user.name
+			%p.content= comment.content
+
+	= render "comments/form"
+---
+```
+
+```
+git status
+git add .
+git commit -m "edit show & index post"
+git push origin layouts-scss
+```
+
+# 最后效果图
+
+![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpqfmy3n6qj31kw0krn6w.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqfmi63jnj31kw0undxx.jpg)
