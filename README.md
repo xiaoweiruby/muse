@@ -755,3 +755,5 @@ git status
 git add .
 git commit -m "add index show & setup voting"
 git push origin acts_as_votable
+```
+![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpqe9yxgraj31c20usdni.jpg)
