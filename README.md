@@ -231,3 +231,106 @@ git push origin add_gem
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61wmb2sj317s0q6tcg.jpg)
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61xzkxmj318a0s20yj.jpg)
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpp61zezq0j318k0ligq6.jpg)
+
+```
+git checkout -b devise
+gem 'devise', '~> 4.4', '>= 4.4.3'
+bundle install
+rails g devise:views
+rails g devise User
+rake db:migrate
+rails g migration add_user_id_to_post user_id:integer
+rake db:migrate
+---
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  belongs_to :user
+end
+---
+app/models/user.rb
+class User < ApplicationRecord
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable, :validatable
+  has_many :posts
+end
+---
+```
+![image](https://ws1.sinaimg.cn/large/006tKfTcgy1fpq0b9q4mvj31kw11048o.jpg)
+```
+app/controllers/posts_controller.rb
+---
+class PostsController < ApplicationController
+  before_action :find_post, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
+  def index
+    @posts = Post.all.order("created_at DESC")
+  end
+
+  def show
+
+  end
+
+  def new
+   @post = current_user.post.build
+  end
+
+  def create
+    @post = current_user.post.build(post_params)
+    if @post.save
+    redirect_to @post
+    else
+    render 'new'
+  end
+end
+
+  def edit
+  end
+
+  def update
+    if @post.update(post_params)
+      redirect_to @post
+    else
+      render 'edit'
+  end
+end
+
+  def destroy
+    @post.destroy
+    redirect_to root_path
+  end
+
+  private
+
+  def find_post
+    @post = Post.find(params[:id])
+  end
+
+  def post_params
+    params.require(:post).permit(:title, :link, :description)
+  end
+end
+```
+```
+rails server
+http://localhost:3000/users/sign_in
+```
+![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpq0bjazoxj31by0egq4c.jpg)
+![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpq0fxw4y6j31js0bugn9.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpq0fz2y4hj30ua09igmf.jpg)
+
+```
+rails c
+2.3.1 :001 > @post = Post.last
+2.3.1 :002 > @post = Post.last
+2.3.1 :003 > @post = Post.first
+2.3.1 :004 > @post.user_id = 1
+2.3.1 :005 > @post.save
+2.3.1 :006 > exit
+```
+![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpq0p6kwwij31kw0ig10b.jpg)
+
+git status
+git add .
+git commit -m "add user_id & setuo devise"
+git push origin devise
