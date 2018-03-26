@@ -329,8 +329,47 @@ rails c
 2.3.1 :006 > exit
 ```
 ![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpq0p6kwwij31kw0ig10b.jpg)
-
+```
 git status
 git add .
 git commit -m "add user_id & setuo devise"
 git push origin devise
+```
+![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpq0sj134mj318a112qcm.jpg)
+
+```
+rails g migration add_name_to_user name:string
+rake db:migrate
+rails g devise views
+```
+```
+app/views/devise/registrations/edit.html.erb
+---
+<div class="form-inputs">
+  <%= f.input :name, required: true, autofocus: true %>
+  <%= f.input :email, required: true %>
+---
+app/views/devise/registrations/new.html.erb
+---
+<div class="form-inputs">
+  <%= f.input :name, required: true, autofocus: true %>
+  <%= f.input :email, required: true %>
+  <%= f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length) %>
+  <%= f.input :password_confirmation, required: true %>
+</div>
+---
+app/controllers/application_controller.rb
+---
+before_action :configure_permitted_parameters, if: :devise_controller?
+
+protected
+
+def configure_permitted_parameters
+  devise_parameter_sanitizer.for(:sign_up) << :name
+  devise_parameter_sanitizer.for(:account_update) << :name
+end
+end
+---
+```
+![image](https://ws2.sinaimg.cn/large/006tKfTcly1fpq1wj68axj312e0fiwg1.jpg)
+![image](https://ws1.sinaimg.cn/large/006tKfTcly1fpq1wizvgrj312a0hwgnj.jpg)
