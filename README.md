@@ -489,7 +489,8 @@ app/views/posts/index.html.haml
 ```
 git status
 git add .
-git commit -m "add paperclip for image up;oadomg"
+git commit -m "add paperclip for image uploadomg"
+git push origin
 
 
 - （4）完成 用户 评论的对接；
