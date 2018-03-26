@@ -360,16 +360,138 @@ app/views/devise/registrations/new.html.erb
 ---
 app/controllers/application_controller.rb
 ---
-before_action :configure_permitted_parameters, if: :devise_controller?
+https://stackoverflow.com/questions/37341967/rails-5-undefined-method-for-for-devise-on-line-devise-parameter-sanitizer
+---
+class ApplicationController < ActionController::Base
+  protect_from_forgery with: :exception
 
-protected
+   before_action :configure_permitted_parameters, if: :devise_controller?
 
-def configure_permitted_parameters
-  devise_parameter_sanitizer.for(:sign_up) << :name
-  devise_parameter_sanitizer.for(:account_update) << :name
-end
-end
+ 	protected
+
+ 	def configure_permitted_parameters
+ 	  devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
+ 	  devise_parameter_sanitizer.permit(:account_update, keys: [:username])
+ 	end
+ end
 ---
 ```
 ![image](https://ws2.sinaimg.cn/large/006tKfTcly1fpq1wj68axj312e0fiwg1.jpg)
 ![image](https://ws1.sinaimg.cn/large/006tKfTcly1fpq1wizvgrj312a0hwgnj.jpg)
+
+```
+git checkout -b paperclip
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  belongs_to :user
+  has_attached_file :image, styles: { medium: "700x500>", thumb: "350x250>" }
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+end
+---
+rails generate paperclip post image
+rake db:migrate
+```
+![image](https://ws3.sinaimg.cn/large/006tNc79gy1fpq9bf0klij31kw0g7dko.jpg)
+
+```
+app/views/posts/show.html.haml
+---
+%h1= @post.title
+%p= @post.link
+%p= @post.description
+%p= @post.user.name
+%p= @post.image
+
+
+= link_to "home", root_path
+= link_to "edit", edit_post_path(@post)
+= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }
+---
+app/controllers/posts_controller.rb
+---
+private
+
+def find_post
+  @post = Post.find(params[:id])
+end
+
+def post_params
+  params.require(:post).permit(:title, :link, :description, :image)
+end
+end
+---
+```
+
+# 本案例的关键的操作在于：
+- （1）完成基本 CRUD 的基本功能；（model + controller + views + routes）
+- （2）完成 devise + name 的使用；（这个注册页面的修改上面，还需要强化认知；）
+http://xbearx1987-blog.logdown.com/posts/1707961-how-to-devise-new-name-field-and-administrator-rights
+```
+Devise 4的参数Sanitaizer API已更改
+
+class ApplicationController < ActionController::Base
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.permit(:sign_up, keys: [:username])
+  end
+end
+```
+- （3）完成 图片 栏位的使用；gem paperclip（这个图片上传的 gem 需要使用最新的上传功能）
+```
+app/views/posts/_form.html.haml
+---
+= simple_form_for @post do |f|
+	= f.input :image
+	= f.input :title
+	= f.input :link
+	= f.input :description
+
+	= f.button :submit
+---
+app/views/posts/show.html.haml
+---
+= image_tag @post.image.url(:medium)
+%h1= @post.title
+%p= @post.link
+%p= @post.description
+%p= @post.user.name
+
+
+= link_to "home", root_path
+= link_to "edit", edit_post_path(@post)
+= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }
+---
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  belongs_to :user
+  has_attached_file :image, styles: { medium: "700x500>", thumb: "350x250>" }
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+end
+---
+app/views/posts/index.html.haml
+---
+- @posts.each do |post|
+  = link_to (image_tag post.image.url), post
+  %h2= link_to post.title, post
+
+  = link_to "add posts", new_post_path
+---
+```
+![image](https://ws4.sinaimg.cn/large/006tKfTcly1fpqalvwfuij30ng0dmab0.jpg)
+![image](https://ws4.sinaimg.cn/large/006tKfTcly1fpqam397hjj30uq0rmtlo.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcly1fpqaucz05ij30xo0wadsz.jpg)
+
+```
+git status
+git add .
+git commit -m "add paperclip for image uploadomg"
+git push origin
+
+
+- （4）完成 用户 评论的对接；
+- （5）完成 页面 美化的调试；
