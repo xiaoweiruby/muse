@@ -609,3 +609,149 @@ git commit -m "add comment to posts"
 git push origin comment
 ```
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqcngnzikj31a80uudnb.jpg)
+```
+git checkout -b acts_as_votable
+https://rubygems.org/gems/acts_as_votable
+gem 'acts_as_votable', '~> 0.11.1'
+bundle install
+rails generate acts_as_votable:migration
+rake db:migrate
+---
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  acts_as_votable
+  belongs_to :user
+  has_many :comments
+  has_attached_file :image, styles: { medium: "700x500>", thumb: "350x250>" }
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+end
+---
+config/routes.rb
+---
+Rails.application.routes.draw do
+  devise_for :views
+  devise_for :users
+  resources :posts do
+    member do
+    put 'like', to: "posts#upvote"
+    put 'dislike', to: "posts#downvote"
+    end
+    resources :comments
+  end
+  root 'posts#index'
+end
+---
+app/controllers/posts_controller.rb
+---
+class PostsController < ApplicationController
+  before_action :find_post, only: [:show, :edit, :update, :destroy, :upvote, :downvote]
+  before_action :authenticate_user!, except: [:index, :show]
+  def index
+    @posts = Post.all.order("created_at DESC")
+  end
+
+  def show
+    @comments = Comment.where(post_id: @post)
+  end
+
+  def new
+   @post = current_user.posts.build
+  end
+
+  def create
+    @post = current_user.posts.build(post_params)
+    if @post.save
+    redirect_to @post
+    else
+    render 'new'
+  end
+end
+
+  def edit
+  end
+
+  def update
+    if @post.update(post_params)
+      redirect_to @post
+    else
+      render 'edit'
+  end
+end
+
+  def destroy
+    @post.destroy
+    redirect_to root_path
+  end
+
+  def upvote
+  @post.upvote_by current_user
+  redirect_back fallback_location: root_path
+end
+
+def downvote
+  @post.downvote_from current_user
+  redirect_back fallback_location: root_path
+end
+
+  private
+
+  def find_post
+    @post = Post.find(params[:id])
+  end
+
+  def post_params
+    params.require(:post).permit(:title, :link, :description, :image)
+  end
+end
+---
+app/views/posts/index.html.haml
+---
+- @posts.each do |post|
+  = link_to (image_tag post.image.url), post
+  %h2= link_to post.title, post
+  %p
+  = post.comments.count
+  Comments
+  %p
+    = post.get_likes.size
+    Likes
+
+%h2= link_to "add posts", new_post_path, class: "button"
+---
+app/views/posts/show.html.haml
+---
+= image_tag @post.image.url(:medium)
+%h1= @post.title
+%p= @post.link
+%p= @post.description
+%p= @post.user.name
+%p= @post.get_upvotes.size
+%p= @post.get_downvotes.size
+= link_to "like", like_post_path(@post), method: :get
+= link_to "dislike", dislike_post_path(@post), method: :get
+
+
+
+#comments
+	%h2.comment_count= pluralize(@post.comments.count, "Comment")
+	- @comments.each do |comment|
+		.comment
+			%p.username= comment.user.name
+			%p.content= comment.content
+
+	= render "comments/form"
+
+= link_to "home", root_path
+= link_to "edit", edit_post_path(@post)
+= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }
+---
+```
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqe5rvujcj30tm0pan94.jpg)
+![image](https://ws1.sinaimg.cn/large/006tKfTcgy1fpqe5gbqddj30z00w410n.jpg)
+
+```
+git status
+git add .
+git commit -m "add index show & setup voting"
+git push origin acts_as_votable

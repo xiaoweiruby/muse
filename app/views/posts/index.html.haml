@@ -4,5 +4,8 @@
   %p
   = post.comments.count
   Comments
+  %p
+    = post.get_likes.size
+    Likes
 
 %h2= link_to "add posts", new_post_path, class: "button"
