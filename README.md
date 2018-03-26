@@ -490,8 +490,121 @@ app/views/posts/index.html.haml
 git status
 git add .
 git commit -m "add paperclip for image uploadomg"
-git push origin
+git push origin paperclip
 
 
 - （4）完成 用户 评论的对接；
 - （5）完成 页面 美化的调试；
+
+```
+# 完成 用户 评论的对接
+```
+git checkout -b comment
+rails g model comment content:text post:references user:references
+rake db:migrate
+---
+app/models/post.rb
+---
+class Post < ApplicationRecord
+  belongs_to :user
+  has_many :comments
+  has_attached_file :image, styles: { medium: "700x500>", thumb: "350x250>" }
+  validates_attachment_content_type :image, content_type: /\Aimage\/.*\z/
+end
+---
+app/models/user.rb
+---
+class User < ApplicationRecord
+  devise :database_authenticatable, :registerable,
+         :recoverable, :rememberable, :trackable, :validatable
+  has_many :posts
+  has_many :comments
+end
+---
+config/routes.rb
+---
+Rails.application.routes.draw do
+  devise_for :views
+  devise_for :users
+  resources :posts do
+    resources :comments
+  end
+  root 'posts#index'
+end
+---
+```
+![image](https://ws3.sinaimg.cn/large/006tKfTcly1fpqbd1rwsnj31kw0uiqf1.jpg)
+
+```
+rails g controller comments
+---
+app/controllers/comments_controller.rb
+---
+class CommentsController < ApplicationController
+ before_action :authenticate_user!
+
+ def create
+   @post = Post.find(params[:post_id])
+   @comment = Comment.create(params[:comment].permit(:content)
+   @comment.user_id = current_user.id
+   @comment.post_id = @post.id
+
+   if @comment.save
+     redirect_to post_path(@post)
+   else
+     render 'new'
+  end
+ end
+end
+---
+app/views/comments/_form.html.haml
+---
+= simple_form_for([@post, @post.comments.build]) do |f|
+	= f.input :content, label: "Reply to thread"
+	= f.button :submit, class: "button"
+---
+app/views/posts/show.html.haml
+---
+= image_tag @post.image.url(:medium)
+%h1= @post.title
+%p= @post.link
+%p= @post.description
+%p= @post.user.name
+
+#comments
+	%h2.comment_count= pluralize(@post.comments.count, "Comment")
+	- @comments.each do |comment|
+		.comment
+			%p.username= comment.user.name
+			%p.content= comment.content
+
+	= render "comments/form"
+
+= link_to "home", root_path
+= link_to "edit", edit_post_path(@post)
+= link_to "Delete", post_path(@post), method: :delete, data: { confirm: "Are you sure?" }
+---
+```
+![image](https://ws2.sinaimg.cn/large/006tKfTcly1fpqc2rmwbgj30uq0v6wrj.jpg)
+
+```
+app/views/posts/index.html.haml
+---
+- @posts.each do |post|
+  = link_to (image_tag post.image.url), post
+  %h2= link_to post.title, post
+  %p
+  = post.comments.count
+  Comments
+
+%h2= link_to "add posts", new_post_path, class: "button"
+---
+```
+![image](https://ws4.sinaimg.cn/large/006tKfTcgy1fpqckld8rtj30to0xitlv.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqck30kksj30um0ymank.jpg)
+```
+git status
+git add .
+git commit -m "add comment to posts"
+git push origin comment
+```
