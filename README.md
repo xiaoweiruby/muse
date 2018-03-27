@@ -1300,7 +1300,7 @@ rails server
 git add .
 git commit -a -m "Update Gemfile for Heroku"
 ```
-
+![image](https://ws3.sinaimg.cn/large/006tNc79ly1fpr46171vyj31kw0ru13d.jpg)
 # heroku 云端部署
 ```
 heroku create xiaoweimuse
@@ -1309,3 +1309,6 @@ rake assets:clean
 heroku run rake db:migrate
 heroku open
 ```
+![image](https://ws4.sinaimg.cn/large/006tNc79ly1fpr44sbht0j31kw0jndm5.jpg)
+![image](https://ws2.sinaimg.cn/large/006tNc79ly1fpr44nx52yj31kw0lvk0r.jpg)
+![image](https://ws1.sinaimg.cn/large/006tNc79ly1fpr44c2ghlj31kw0l446w.jpg)
