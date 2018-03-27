@@ -1,4 +1,16 @@
 # 才华横溢 muse 案例教学 12
+
+# 最后效果图
+
+![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpqfmy3n6qj31kw0krn6w.jpg)
+![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqfmi63jnj31kw0undxx.jpg)
+
+# Github Repo:
+https://github.com/shenzhoudance/muse
+
+# Visit this website:
+https://xiaoweimuse.herokuapp.com/
+
 ```
 cd workspace
 rails new muse
@@ -1262,3 +1274,38 @@ git push origin layouts-scss
 
 ![image](https://ws2.sinaimg.cn/large/006tKfTcgy1fpqfmy3n6qj31kw0krn6w.jpg)
 ![image](https://ws3.sinaimg.cn/large/006tKfTcgy1fpqfmi63jnj31kw0undxx.jpg)
+
+
+```
+git checkout -b heroku
+---
+Gemfile
+---
+group :development, :test do
+  gem 'sqlite3', '1.3.13'
+  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
+  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  # Adds support for Capybara system testing and selenium driver
+  gem 'capybara', '~> 2.13'
+  gem 'selenium-webdriver'
+end
+
+group :production do
+  gem 'pg', '0.20.0'
+end
+---
+bundle install
+rails server
+---
+git add .
+git commit -a -m "Update Gemfile for Heroku"
+```
+
+# heroku 云端部署
+```
+heroku create xiaoweimuse
+git push heroku heroku:master
+rake assets:clean
+heroku run rake db:migrate
+heroku open
+```
